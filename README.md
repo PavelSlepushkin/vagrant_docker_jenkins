@@ -1,4 +1,4 @@
-######Task:
+###### Task:
 
 Create a project based on Vagrant tool  https://www.vagrantup.com/ 
 Write a configuration based on example https://www.vagrantup.com/docs/provisioning/ansible.html 
@@ -12,7 +12,7 @@ Please, place your code on  https://github.com/
 
 Using Docker containers for Jenkins serwers and "Job" script wil be an extra advenage.
 
-######Notes:
+###### Notes:
 Tested on
 vagrant 2.0.2
 ansible 2.6.4
