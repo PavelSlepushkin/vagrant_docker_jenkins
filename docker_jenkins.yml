@@ -1,0 +1,63 @@
+- hosts: all
+# docker installation for ubuntu (x64 xenial)
+# Ref https://docs.docker.com/install/linux/docker-ce/ubuntu/
+  tasks:
+  - name: Uninstall old versions
+    apt:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+      - docker
+      - docker-engine
+      - docker.io
+
+  - name: Install packages to allow apt to use a repository over HTTPS
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    with_items:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip    #this one for ansible
+
+  - name: Add Docker’s official GPG key
+    apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+
+  - name: Set up the stable repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+
+  - name: Install Docker CE
+    apt:
+      name: docker-ce
+      state: present
+      update_cache: yes    
+# end of docker installation  
+  - name: Dependency for docker_container module
+    pip:
+      name: docker    
+# run jenkins image
+# Ref https://github.com/jenkinsci/docker/blob/master/README.md
+# !!Not for production!! (no admin account => unsecure)
+  - name: Run Jenkins LTS image
+    docker_container:
+      name: jenkins
+      image: jenkins/jenkins:lts
+      state: started
+      ports: "8080:8080"
+      env:
+             JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+# copy job template
+  - name: Copy job template
+    copy:
+      src: job_template.xml
+      dest: /home/vagrant/job_template.xml           
+# create cron job
+  - name: Add entry to cron
+    cron:
+      name: create jenkins job
+      minute: "*/5"
+      job: docker exec -i jenkins java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ create-job test_shell_task_$(date +\%Y\%m\%d_\%H\%M) < /home/vagrant/job_template.xml
