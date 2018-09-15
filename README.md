@@ -14,11 +14,15 @@ Using Docker containers for Jenkins serwers and "Job" script wil be an extra adv
 
 #### Notes:
 Tested on
+
 vagrant 2.0.2
 ansible 2.6.4
+
 Full provisioning is done via 
+
 `$ vagrant up`
-after provisioning Jenkins is available on http://127.0.0.1:8080 
+
+After provisioning Jenkins is available on http://127.0.0.1:8080 
 
 >Create (by Ansible) Bash script which form every 5 min new Job (example task) in Jenkins serwer by using Jenkins CLI.
 >Script should be activated as a serwis or added to Crone.
